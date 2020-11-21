@@ -37,4 +37,10 @@ class AuthController extends Controller
 
         return response()->json([],204); // No content
     }
+
+    public function refresh() {
+        $token = \Auth::guard('api')->refresh();
+
+        return response()->json(['token' => $token],200); // No content
+    }
 }

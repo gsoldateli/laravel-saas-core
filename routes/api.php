@@ -20,11 +20,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('login', [AuthController::class, 'login']);
+Route::post('refresh',[AuthController::class, 'refresh']);
 
-Route::group(['middleware' => 'auth:api'], function() {
+
+Route::group(['middleware' => ['auth:api','jwt.refresh']], function() {
     Route::get('users', function() {
         return \App\Models\User::all();
     });
 
     Route::post('logout',[AuthController::class, 'logout']);
+
 });
