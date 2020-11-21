@@ -11,25 +11,30 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->ajax();
-        // dd($request->headers->get('X-Requested-With'));
-        // dd($request->all());
+
         validator($request->all(),[
-            'title' => 'required|max:255',
-            'body' => 'required|min:100',
+            'email' => 'required|string',
+            'password' => 'required|string',
         ])->validate();
 
-        // $validator = Validator::make($request->all(), [
-        //     'title' => 'required|max:255',
-        //     'body' => 'required|min:100',
-        // ]);
-        //     if($validator->fails()) {
-        //         return $validator->validate();
-        //     }
+        $credentials = $request->only('email','password');
+
+        $token = \JWTAuth::attempt($credentials);
 
         // if (! $token = auth()->attempt($credentials)) {
         //     return response()->json(['error' => 'Unauthorized'], 401);
         // }
 
-        // return $this->respondWithToken($token);
+        return $this->responseToken($token);
+    }
+
+    private function responseToken($token) {
+        return $token ? ['token' => $token] : response()->json(['error' => \Lang::get('auth.failed')],400);
+    }
+
+    public function logout() {
+        \Auth::guard('api')->logout();
+
+        return response()->json([],204); // No content
     }
 }

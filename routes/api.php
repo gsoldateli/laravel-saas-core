@@ -20,3 +20,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('login', [AuthController::class, 'login']);
+
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::get('users', function() {
+        return \App\Models\User::all();
+    });
+
+    Route::post('logout',[AuthController::class, 'logout']);
+});
